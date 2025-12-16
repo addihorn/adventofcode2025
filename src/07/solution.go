@@ -5,15 +5,17 @@ import (
 	"fmt"
 )
 
-const inputFile = "input_test.txt"
+const inputFile = "input.txt"
 
 var inputData []string
 
-var tachyonBeams map[int]bool
+var tachyonBeams map[int]int
 
 const (
 	splitter = '^'
 )
+
+var split = 0
 
 func main() {
 	inputData = aocutils.ReadInput(inputFile)
@@ -25,10 +27,21 @@ func main() {
 /* Do some puzzle initialization */
 
 func initializePuzzle() {
-	tachyonBeams = make(map[int]bool)
+	tachyonBeams = make(map[int]int)
 	for i, p := range inputData[0] {
 		if p == 'S' {
-			tachyonBeams[i] = true
+			tachyonBeams[i] = 1
+		}
+	}
+
+	for _, row := range inputData[1:] {
+		for i, s := range tachyonBeams {
+			if row[i] == splitter {
+				split++
+				delete(tachyonBeams, i)
+				tachyonBeams[i-1] += s
+				tachyonBeams[i+1] += s
+			}
 		}
 	}
 }
@@ -36,39 +49,14 @@ func initializePuzzle() {
 /* Solve here */
 
 func part1() {
-	initializePuzzle()
-	split := 0
-	for _, row := range inputData[1:] {
-		for i := range tachyonBeams {
-			if row[i] == splitter {
-				split++
-				delete(tachyonBeams, i)
-				tachyonBeams[i-1] = true
-				tachyonBeams[i+1] = true
-			}
-		}
-	}
 
 	fmt.Printf("Solution for part 1: %d\n", split)
 }
 
 func part2() {
-	initializePuzzle()
 	timelines := 0
-	for _, row := range inputData[1:] {
-		split := false
-		for i := range tachyonBeams {
-			if row[i] == splitter {
-				split = true
-				delete(tachyonBeams, i)
-				tachyonBeams[i-1] = true
-				tachyonBeams[i+1] = true
-			}
-		}
-		if split {
-			timelines += len(tachyonBeams)
-		}
+	for _, s := range tachyonBeams {
+		timelines += s
 	}
-
 	fmt.Printf("Solution for part 1: %d\n", timelines)
 }

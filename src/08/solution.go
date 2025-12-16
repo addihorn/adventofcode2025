@@ -84,7 +84,7 @@ func findNeighbors(box *junktionBox) {
 func part1() {
 	_ = inputData
 	initializePuzzle()
-	for range 10 {
+	for range 1000 {
 		// find shortest path
 		min := slices.MinFunc(jb, func(a, b *junktionBox) int {
 			return cmp.Compare(a.shortestUnconnected.distance, b.shortestUnconnected.distance)
